@@ -128,7 +128,7 @@ def a_star_algo(node_structures, goal):
     #print("\nHEAD -> ", node_map[h])
     #print('q = [', end='')
     # for (i, n) in enumerate(q):
-    #print(f'{node_map[n].pos} {node_map[n].combined_cost}', end=(', ' if i != len(q) - 1 else ']\n'))
+    #print(f'{node_map[n].pos} [{node_map[n].cost_so_far} + {node_map[n].heuristic} = {node_map[n].combined_cost}]', end=(', ' if i != len(q) - 1 else ']\n'))
     #print('done = ', done)
     done.append(h)
     node_map[h].done = True
@@ -139,6 +139,7 @@ def a_star_algo(node_structures, goal):
         print(node_map[h].path)
         visualize_env(node_structures.get_graph_map_list(
             node_map[h].path), 'final_map')
+
         return
 
     #print(f'head {h} -> {node_map[h].cost_so_far}')
@@ -153,16 +154,18 @@ def a_star_algo(node_structures, goal):
         node = node_map[pos]
         #print(f'{node.pos} actual move -> {node.name not in [FRONTEIRA, BARREIRA] and node.pos not in done}')
         if node.name not in [FRONTEIRA, BARREIRA] and node.pos not in done:
-            node.visited = True
             #print(f'{node.name} {node.pos}: {node.cost_so_far} + {node.heuristic} = {node.combined_cost} -> ', end='')
-            node.cost_so_far = min(
-                node.cost_so_far, node_map[h].cost_so_far + (3 if node.name == AGUA else 1))
-            #print(f'{node.cost_so_far} + {node.heuristic} = {node.combined_cost} ')
-            node.path = node_map[h].path + [node.pos]
-            if node.pos not in q:
+            if node.cost_so_far > node_map[h].cost_so_far + (3 if node.name == AGUA else 1):
+                node.cost_so_far = node_map[h].cost_so_far + \
+                    (3 if node.name == AGUA else 1)
+                #print(f'{node.cost_so_far} + {node.heuristic} = {node.combined_cost} ')
+                node.path = node_map[h].path + [node.pos]
+            if not node.visited:
                 q.append(node.pos)
+            node.visited = True
 
     node_structures.q = list(set(q))
+    node_structures.q.sort(key=lambda x: node_map[x].heuristic)
     node_structures.q.sort(key=lambda x: node_map[x].combined_cost)
     node_structures.counter += 1
     a_star_algo(node_structures, goal)
