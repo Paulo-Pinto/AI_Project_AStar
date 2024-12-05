@@ -2,8 +2,8 @@
 
 Developed by:
 
--   Tiago Matos 21905643
--   Paulo Pinto 21906966
+-   Tiago Matos
+-   Paulo Pinto
 
 This project implements the A* algorithm to find the best path through a square map with different terrain restrictions.
 
